@@ -2,10 +2,50 @@
 
 ## 1. System Design
 
+- Core actions:
+1. User should be able to add a pet
+2. Create a schedule to keep track of tasks
+3. Add/remove tasks
+
 **a. Initial design**
 
 - Briefly describe your initial UML design.
+A schedule object contains many task objects and can track many pet objects 
+
 - What classes did you include, and what responsibilities did you assign to each?
+
+Pet:
+Attributes:
+- name: String
+- breed: String
+- age: Int
+- medications: list<String>
+Methods:
+- addPet()
+- removePet()
+- updatePetInfo()
+
+Schedule:
+Attributes:
+- tasks: list<Task>
+Methods:
+- addTask(Task)
+
+Task:
+Attributes:
+- type: String
+- name: String
+- priority: Int/String depending on project needs
+- time: String
+Methods:
+- createTask()
+- updateTask()
+
+Owner:
+Attributes:
+- name: String
+- address: String
+- phone: String
 
 **b. Design changes**
 
