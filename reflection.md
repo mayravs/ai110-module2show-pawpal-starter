@@ -10,7 +10,7 @@
 **a. Initial design**
 
 - Briefly describe your initial UML design.
-A schedule object contains many task objects and can track many pet objects 
+A schedule object contains many task objects and can track many pet objects. An owner can have zero or many pets. 
 
 - What classes did you include, and what responsibilities did you assign to each?
 
@@ -50,7 +50,12 @@ Attributes:
 **b. Design changes**
 
 - Did your design change during implementation?
+
+Yes, some classes had the wrong responsibilities. 
+
 - If yes, describe at least one change and why you made it.
+
+My Pet class had add/remove pet, but as AI pointed out, those responsibilities should lie with the Owner class. Which makes sense, a Pet should not be able to add or remove itself, that should be up to the Owner. 
 
 ---
 
