@@ -4,72 +4,62 @@ from pawpal_system import Pet, Task, Owner
 st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")
 
 st.title("🐾 PawPal+")
+st.caption("A pet care planning assistant — build a schedule, spot conflicts, and track tasks.")
 
-st.markdown(
-    """
-Welcome to the PawPal+ starter app.
-
-This file is intentionally thin. It gives you a working Streamlit app so you can start quickly,
-but **it does not implement the project logic**. Your job is to design the system and build it.
-
-Use this app as your interactive demo once your backend classes/functions exist.
-"""
-)
-
-with st.expander("Scenario", expanded=True):
+with st.expander("About this app", expanded=False):
     st.markdown(
         """
-**PawPal+** is a pet care planning assistant. It helps a pet owner plan care tasks
-for their pet(s) based on constraints like time, priority, and preferences.
+**PawPal+** helps a pet owner plan care tasks based on constraints like time, priority, and preferences.
 
-You will design and implement the scheduling logic and connect it to this Streamlit UI.
+Your system represents pets, tasks, and an owner, then builds and explains a daily schedule.
 """
     )
 
-with st.expander("What you need to build", expanded=True):
-    st.markdown(
-        """
-At minimum, your system should:
-- Represent pet care tasks (what needs to happen, how long it takes, priority)
-- Represent the pet and the owner (basic info and preferences)
-- Build a plan/schedule for a day that chooses and orders tasks based on constraints
-- Explain the plan (why each task was chosen and when it happens)
-"""
-    )
+PRIORITY_ICON = {"high": "🔴", "medium": "🟡", "low": "🟢"}
+SPECIES_EMOJI = {"dog": "🐶", "cat": "🐱", "other": "🐾"}
 
 st.divider()
 
-st.subheader("Quick Demo Inputs (UI only)")
-owner_name = st.text_input("Owner name", value="Jordan")
-owner_address = st.text_input("Owner address", value="123 Main St")
-owner_phone = st.text_input("Owner phone", value="555-1234")
+# ── Owner ──────────────────────────────────────────────────────────────────
+st.subheader("Owner")
+col1, col2, col3 = st.columns(3)
+owner_name    = col1.text_input("Name",    value="Jordan")
+owner_address = col2.text_input("Address", value="123 Main St")
+owner_phone   = col3.text_input("Phone",   value="555-1234")
 
-# Initialize owner once; shared across all reruns
 if "owner" not in st.session_state:
     st.session_state.owner = Owner(name=owner_name, address=owner_address, phone=owner_phone)
 
 owner: Owner = st.session_state.owner
-# Keep owner name in sync with the text input
 owner.name = owner_name
 
 st.divider()
 
+# ── Pets ───────────────────────────────────────────────────────────────────
 st.subheader("Your Pets")
 
 if owner.pets:
-    st.write("Current pets:")
-    st.table([{"name": p.name, "species": p.species, "age": p.age} for p in owner.pets])
+    st.table([
+        {
+            "": SPECIES_EMOJI.get(p.species, "🐾"),
+            "name": p.name,
+            "species": p.species,
+            "age (yrs)": p.age,
+            "medications": ", ".join(p.medications) if p.medications else "none",
+        }
+        for p in owner.pets
+    ])
 else:
-    st.info("No pets yet. Add one below.")
+    st.info("No pets yet — add one below.")
 
 with st.form("add_pet_form"):
     st.markdown("**Add a pet**")
-    col1, col2 = st.columns(2)
-    with col1:
-        new_pet_name = st.text_input("Pet name", value="Mochi")
-        new_age = st.number_input("Age", min_value=0, max_value=30, value=5)
-    with col2:
-        new_species = st.selectbox("Species", ["dog", "cat", "other"])
+    c1, c2 = st.columns(2)
+    with c1:
+        new_pet_name  = st.text_input("Pet name", value="Mochi")
+        new_age       = st.number_input("Age", min_value=0, max_value=30, value=5)
+    with c2:
+        new_species     = st.selectbox("Species", ["dog", "cat", "other"])
         new_medications = st.text_input("Medications (comma-separated)", value="")
     if st.form_submit_button("Add pet"):
         new_pet = Pet(
@@ -81,30 +71,31 @@ with st.form("add_pet_form"):
         st.session_state.owner.add_pet(new_pet)
         st.rerun()
 
-# Use the first pet for task assignment if any exist
 pet = owner.pets[0] if owner.pets else None
 
 st.divider()
 
-st.markdown("### Tasks")
-st.caption("Add a few tasks. In your final version, these should feed into your scheduler.")
+# ── Tasks ──────────────────────────────────────────────────────────────────
+st.subheader("Tasks")
 
 if pet is None:
     st.warning("Add a pet above before adding tasks.")
     st.stop()
 
+st.caption(f"Adding tasks for **{pet.name}** {SPECIES_EMOJI.get(pet.species, '🐾')}")
+
 col1, col2, col3 = st.columns(3)
 with col1:
     task_title = st.text_input("Task title", value="Morning walk")
-    task_time = st.text_input("Time (HH:MM)", value="08:00")
+    task_time  = st.text_input("Time (HH:MM)", value="08:00")
 with col2:
-    duration = st.number_input("Duration (minutes)", min_value=1, max_value=240, value=20)
+    duration  = st.number_input("Duration (minutes)", min_value=1, max_value=240, value=20)
     frequency = st.selectbox("Frequency", ["daily", "weekly", "once"])
 with col3:
-    priority = st.selectbox("Priority", ["low", "medium", "high"], index=2)
+    priority    = st.selectbox("Priority", ["low", "medium", "high"], index=2)
     description = st.text_input("Description", value="")
 
-if st.button("Add task"):
+if st.button("Add task", type="primary"):
     task = Task.create_task(
         task_type=task_title,
         duration=int(duration),
@@ -118,32 +109,81 @@ if st.button("Add task"):
     st.rerun()
 
 tasks = owner.schedule.get_tasks_for_pet(pet)
+
 if tasks:
-    st.write("Current tasks:")
-    st.table([
-        {"type": t.task_type, "time": t.time, "duration (min)": t.duration,
-         "priority": t.priority, "frequency": t.frequency, "done": t.is_complete}
-        for t in tasks
-    ])
+    st.markdown(f"**{len(tasks)} task(s) for {pet.name}:**")
+    for i, t in enumerate(tasks):
+        icon = PRIORITY_ICON.get(t.priority, "⚪")
+        c1, c2, c3 = st.columns([5, 1, 1])
+        with c1:
+            if t.is_complete:
+                st.markdown(f"{icon} ~~{t.task_type}~~ · {t.time} · {t.duration} min · _{t.frequency}_")
+            else:
+                st.markdown(f"{icon} **{t.task_type}** · {t.time} · {t.duration} min · _{t.frequency}_")
+        with c2:
+            if t.is_complete:
+                st.success("done", icon="✅")
+            else:
+                st.caption("⏳ pending")
+        with c3:
+            if not t.is_complete and st.button("Mark done", key=f"done_{i}"):
+                owner.schedule.mark_task_complete(pet, t)
+                st.rerun()
+
+    conflicts = owner.schedule.get_conflicts()
+    if conflicts:
+        for w in conflicts:
+            st.error(w, icon="⚠️")
+    else:
+        st.success("No scheduling conflicts.", icon="✅")
 else:
-    st.info("No tasks yet. Add one above.")
+    st.info("No tasks yet — add one above.")
 
 st.divider()
 
+# ── Schedule ───────────────────────────────────────────────────────────────
 st.subheader("Build Schedule")
-st.caption("This button should call your scheduling logic once you implement it.")
 
-if st.button("Generate schedule"):
+if st.button("Generate schedule", type="primary"):
     sorted_tasks = owner.schedule.get_tasks_sorted_by_time()
-    pending = owner.schedule.get_all_pending_tasks()
+    pending      = owner.schedule.get_all_pending_tasks()
+    completed    = owner.schedule.get_all_completed_tasks()
+    conflicts    = owner.schedule.get_conflicts()
 
-    if sorted_tasks:
-        st.markdown("**Full schedule (chronological):**")
-        st.table([
-            {"type": t.task_type, "time": t.time, "duration (min)": t.duration,
-             "priority": t.priority, "done": t.is_complete}
-            for t in sorted_tasks
-        ])
-        st.markdown(f"**Pending tasks:** {len(pending)} of {len(sorted_tasks)} remaining")
+    if not sorted_tasks:
+        st.info("No tasks scheduled yet — add tasks above, then generate the schedule.")
     else:
-        st.info("No tasks scheduled yet. Add tasks above, then generate the schedule.")
+        # Conflict status banner
+        if conflicts:
+            for w in conflicts:
+                st.error(w, icon="⚠️")
+        else:
+            st.success("Schedule is conflict-free!", icon="✅")
+
+        # Summary metrics
+        total = len(sorted_tasks)
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Total tasks",  total)
+        c2.metric("Pending",      len(pending))
+        c3.metric("Completed",    len(completed))
+
+        if total > 0:
+            pct = len(completed) / total
+            st.progress(pct, text=f"{len(completed)} of {total} tasks complete")
+
+        # Chronological table
+        st.markdown("**Chronological schedule:**")
+        st.dataframe(
+            [
+                {
+                    "time":          t.time,
+                    "task":          f"{PRIORITY_ICON.get(t.priority, '⚪')} {t.task_type}",
+                    "duration (min)": t.duration,
+                    "priority":      t.priority,
+                    "status":        "✅ done" if t.is_complete else "⏳ pending",
+                }
+                for t in sorted_tasks
+            ],
+            use_container_width=True,
+            hide_index=True,
+        )

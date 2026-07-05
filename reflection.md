@@ -94,13 +94,22 @@ Tasks naturally belong to their pet.
 **a. How you used AI**
 
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
+
+I used AI to help find the missing gaps in my inital system design. I also used it to generate tests for possible edge cases for the most important scheduling logic. 
+
 - What kinds of prompts or questions were most helpful?
+
+Asking AI if it notices any missing relationships or potential logic bottlenecks in my UML design.
 
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.
+
+When I asked it to add to the smart scheduler table in my README and it didn't follow the table structure and added additional information. I had to ask it to only follow the table structure requirements. 
+
 - How did you evaluate or verify what the AI suggested?
 
+I made sure to review the changes it wanted to make prior to accepting them. After accepting, if there was code that seemed to pythonic, I asked it to explain and possibly refactor for readability purposes. 
 ---
 
 ## 4. Testing and Verification
@@ -108,13 +117,22 @@ Tasks naturally belong to their pet.
 **a. What you tested**
 
 - What behaviors did you test?
+
+I tested several including sorting, filtering, scheduling conflicts and reoccruing events. 
+
 - Why were these tests important?
+
+These tests check the core scheduling logic. Testing happy paths and edge cases ensure that we're making an accurate schedule for the user.
 
 **b. Confidence**
 
 - How confident are you that your scheduler works correctly?
+
+I'm about 4/5 stars confident
+
 - What edge cases would you test next if you had more time?
 
+I would test displaying correct tasks depending on the pet. 
 ---
 
 ## 5. Reflection
@@ -123,10 +141,16 @@ Tasks naturally belong to their pet.
 
 - What part of this project are you most satisfied with?
 
+I was the most satisfied with the sorting algorithm and using the priority of a task as a tie-breaker.
+
 **b. What you would improve**
 
 - If you had another iteration, what would you improve or redesign?
 
+I would work on the UI a bit more and add filtering by pet as a feature.
+
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+
+I learned that taking the time to design systems helps the implementation part of a project run smoother. There may be tradeoffs along the way and several changes. Your original plan may not be an accurate reflection of your final version, but it's a really good starting point that AI can help craft. 

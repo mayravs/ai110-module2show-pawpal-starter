@@ -1,0 +1,60 @@
+classDiagram
+    class Owner {
+        +String name
+        +String address
+        +String phone
+        +List~Pet~ pets
+        +Schedule schedule
+        +add_pet(pet: Pet)
+        +remove_pet(pet: Pet)
+        +find_pet(name: String) Pet
+        +get_all_tasks() List~Task~
+        +get_all_pending_tasks() List~Task~
+    }
+
+    class Pet {
+        +String name
+        +String species
+        +Int age
+        +List~String~ medications
+        +List~Task~ tasks
+        +update_pet_info()
+        +add_task(task: Task)
+        +remove_task(task: Task)
+        +get_pending_tasks() List~Task~
+    }
+
+    class Schedule {
+        +List~Pet~ pets
+        +add_task(pet: Pet, task: Task)
+        +remove_task(pet: Pet, task: Task)
+        +mark_task_complete(pet: Pet, task: Task)
+        +get_tasks_for_pet(pet: Pet) List~Task~
+        +get_all_pending_tasks() List~Task~
+        +get_all_completed_tasks() List~Task~
+        +get_tasks_by_time(time: String) List~Task~
+        +get_tasks_by_type(task_type: String) List~Task~
+        +get_conflicts() List~String~
+        +get_tasks_sorted_by_time() List~Task~
+    }
+
+    class Task {
+        +String task_type
+        +String description
+        +String time
+        +Int duration
+        +String priority
+        +String frequency
+        +Bool is_complete
+        +Pet pet
+        +Date due_date
+        +create_task()$ Task
+        +update_task()
+        +mark_complete() Task
+    }
+
+    Owner "1" --> "0..*" Pet : owns
+    Owner "1" --> "1" Schedule : has
+    Schedule "1" --> "0..*" Pet : tracks
+    Pet "1" --> "0..*" Task : has
+    Task "0..1" --> "1" Pet : assigned to
