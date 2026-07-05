@@ -10,6 +10,7 @@
 **a. Initial design**
 
 - Briefly describe your initial UML design.
+
 A schedule object contains many task objects and can track many pet objects. An owner can have zero or many pets. 
 
 - What classes did you include, and what responsibilities did you assign to each?

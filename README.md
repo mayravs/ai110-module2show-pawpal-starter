@@ -85,7 +85,7 @@ pip install -r requirements.txt
 
 ```bash
 # Run the full test suite:
-pytest
+python3 -m pytest
 
 # Run with coverage:
 pytest --cov
@@ -94,8 +94,41 @@ pytest --cov
 Sample test output:
 
 ```
-# Paste your pytest output here
+============================================================================ test session starts =============================================================================
+platform darwin -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/mayra/Github/ai110-module2show-pawpal-starter
+plugins: anyio-4.14.0
+collected 18 items                                                                                                                                                           
+
+tests/test_pawpal.py ..................                                                                                                                                [100%]
+
+============================================================================= 18 passed in 0.02s =============================================================================
+
 ```
+
+Tests Summary:
+
+Task Count (1 test)
+- Happy path: adding a task appends to the pet's task list
+
+Mark Complete (1 test)
+- Happy path: marking a task complete flips the status flag on a task
+
+Sorting (5 tests)
+- Happy path: 3 tasks in random order → returned chronologically
+- Tiebreaker: same time, priority order (high → medium → low)
+- Multi-pet: tasks from different pets interleave by time
+- Edge cases: empty schedule and a pet with no tasks both return []
+
+Recurrence (5 tests)
+- Happy paths: daily advances by 1 day, weekly advances by 7 days
+- Edge case: once frequency returns None (no follow-up)
+- Field inheritance: the new task copies all fields including the pet reference
+- Integration: schedule.mark_task_complete() leaves the pet with 2 tasks (1 done, 1 pending)
+
+Conflict detection (6 tests)
+- Happy paths: exact same time flags a conflict, partial overlap flags a conflict
+- Edge cases: back-to-back tasks (touching but not overlapping) → no conflict; same time on different dates → no conflict; empty schedule and single task → no conflict
 
 ## 📐 Smarter Scheduling
 
