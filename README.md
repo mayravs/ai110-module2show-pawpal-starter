@@ -93,7 +93,7 @@ pytest --cov
 
 Sample test output:
 
-```
+```bash
 ============================================================================ test session starts =============================================================================
 platform darwin -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0
 rootdir: /Users/mayra/Github/ai110-module2show-pawpal-starter
@@ -103,8 +103,9 @@ collected 18 items
 tests/test_pawpal.py ..................                                                                                                                                [100%]
 
 ============================================================================= 18 passed in 0.02s =============================================================================
-
 ```
+
+**Confidence Level:** ⭐⭐⭐⭐
 
 Tests Summary:
 
