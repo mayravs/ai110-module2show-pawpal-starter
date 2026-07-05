@@ -43,7 +43,7 @@ pip install -r requirements.txt
 7. Refine UML so it matches what you actually built.
 
 ## 🖥️ Sample Output
-
+```bash
 ========================================
   Conflict Report
 ========================================
@@ -51,7 +51,6 @@ pip install -r requirements.txt
   WARNING: Luna's 'exercise' (09:00, 30 min) overlaps with Mochi's 'bath' (09:00, 20 min)
   WARNING: Luna's 'vet' (09:15, 30 min) overlaps with Mochi's 'bath' (09:00, 20 min)
 ========================================
-
 
 ========================================
   Today's Schedule for Alex's Pets
@@ -80,6 +79,7 @@ pip install -r requirements.txt
   ○ 09:00 | Mochi | bath — Monthly bath | priority: medium
   ○ 08:00 | Mochi | medication — Give Apoquel with food | priority: high
 ========================================
+```
 
 ## 🧪 Testing PawPal+
 
