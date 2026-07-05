@@ -42,7 +42,7 @@ pip install -r requirements.txt
 6. Connect your logic to the Streamlit UI in `app.py`.
 7. Refine UML so it matches what you actually built.
 
-## 🖥️ Sample Output
+## 🖥️ Sample CLI Output
 ```bash
 ========================================
   Conflict Report
@@ -140,12 +140,32 @@ Conflict detection (6 tests)
 | Conflict detection | `Schedule.get_conflicts()` | Interval overlap check (`a_start < b_end AND b_start < a_end`); scoped to same `due_date` to avoid cross-day false positives. Returns warning strings, never raises. |
 | Recurring tasks | `Task.mark_complete()`, `Schedule.mark_task_complete(pet, task)` | `mark_complete()` returns the next `Task` using `timedelta`; `mark_task_complete()` appends it to the pet automatically. `"once"` tasks return `None`. |
 
-## 📸 Demo Walkthrough
+## Demo Walkthrough
 
-Describe your app in numbered steps so a reader can follow along without watching a video:
+### UI Features
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+The Streamlit app is divided into four sections, each visible on a single scrollable page:
+
+- **Owner** — three text inputs for name, address, and phone. Changes apply immediately without a form submit.
+- **Your Pets** — a table listing every pet (name, species, age, medications). Below it, a form lets you add a new pet with a name, age, species dropdown, and an optional comma-separated medications field.
+- **Tasks** — inputs for task title, time (HH:MM), duration (minutes), frequency (`daily` / `weekly` / `once`), priority (`low` / `medium` / `high`), and an optional description. Each existing task shows its status (⏳ pending or ✅ done) and a **Mark done** button. Conflict warnings appear inline as red banners immediately after tasks are added.
+- **Build Schedule** — a single button that renders a conflict-status banner, three summary metrics (total / pending / completed), a progress bar, and a sortable dataframe of all tasks in chronological order.
+
+### Example Workflow
+
+1. **Enter owner info** — type a name (e.g., *Jordan*), address, and phone in the Owner section.
+2. **Add a pet** — open the *Add a pet* form, enter `Mochi`, species `cat`, age `5`, medications `Apoquel`, and click **Add pet**. The pets table updates immediately.
+3. **Add tasks** — set task title to `Morning medication`, time `08:00`, duration `5`, frequency `daily`, priority `high`, then click **Add task**. Repeat for any other tasks (e.g., a `Playtime` task at `13:00`).
+4. **Introduce a conflict** — add a second task starting at `08:00` (e.g., a `Vet visit` of 30 min). A red warning banner appears: `WARNING: Mochi's 'Morning medication' (08:00, 5 min) overlaps with Mochi's 'Vet visit' (08:00, 30 min)`.
+5. **Mark a task done** — click **Mark done** on `Morning medication`. The task strikes through, its status flips to ✅, and a new pending occurrence is automatically queued for the next day.
+6. **Generate the schedule** — click **Generate schedule** to see all tasks sorted chronologically, the conflict banner, and live pending/completed counts.
+
+### Key Scheduler Behaviors
+
+| Behavior | What you see |
+|---|---|
+| **Chronological sort** | Tasks always appear earliest-first regardless of the order they were added. |
+| **Priority tiebreaker** | Two tasks at the same time are ordered high → medium → low. |
+| **Conflict detection** | Any two tasks whose time windows overlap on the same date trigger a red `WARNING:` banner. Back-to-back tasks (one ends exactly when the next begins) do not conflict. |
+| **Recurring auto-schedule** | Marking a `daily` task done creates a copy due tomorrow; `weekly` tasks advance by 7 days; `once` tasks do not recur. |
+| **Cross-pet view** | The schedule and conflict check span all pets — Luna's 09:00 walk can conflict with Mochi's 09:00 bath. |
